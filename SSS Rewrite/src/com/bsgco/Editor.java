@@ -3,7 +3,11 @@ package com.bsgco;
 public final class Editor {
 	private final String data;
 	
+	private String name;
+	
 	public Editor(String file) {
+		//set name blank
+		name = null;
 		//split one line into many around newline
 		String [] lines = file.split("\n");
 		//start a new String
@@ -28,8 +32,19 @@ public final class Editor {
 	public String toString() { return data; }
 	
 	private String handleLine(String line) {
-		//if it has these three things
-		if(line.contains("<position") && line.contains("finish=") && line.contains("start=")) {
+		if(line.contains("<name>")) {
+			String fix = line.trim(); //cut whitespace
+			fix = fix.substring(6, fix.length() - 7); //cut tags
+			char c = Character.toUpperCase(fix.charAt(0)); //get the first character upper case
+			name = c + fix.substring(1) + ". "; //put together and store 
+			return line; //return original
+		}
+		else if(line.contains("<label>")) {
+			String fix = line.trim(); //cut whitespace
+			fix = fix.substring(7, fix.length() - 8); //cut tags
+			return "<label>" + name + fix + "</label>";
+		}
+		else if(line.contains("<position") && line.contains("finish=") && line.contains("start=")) { //if it has these three things
 			String [] strs = line.replace("<position", "") //cut the beginning
 					.replace("/>", "") //cut the end
 					.trim() //cut the whitespace
